@@ -96,27 +96,30 @@ var ADIOS2Configs = map[string]interface{}{
 		src_path, install_path string,
 		is_debug, has_mpi bool,
 		cpu_arch, gpu_arch string,
+		use_modules bool,
 		opts map[string]string,
 	) ([]string, []string, []string, []string) {
 		modules := []string{}
-		if cpu_arch != "" {
-			if cxx, ok := opts["CXX"]; ok {
-				modules = append(modules, cxx)
-			} else {
-				panic("CXX module is not specified")
+		if use_modules {
+			if cpu_arch != "" {
+				if cxx, ok := opts["CXX"]; ok {
+					modules = append(modules, cxx)
+				} else {
+					panic("CXX module is not specified")
+				}
 			}
-		}
-		if gpu_arch != "" {
-			if cuda, ok := opts["CUDA"]; ok {
-				modules = append(modules, cuda)
-			} else {
-				panic("GPU enabled but CUDA module is not specified")
+			if gpu_arch != "" {
+				if cuda, ok := opts["CUDA"]; ok {
+					modules = append(modules, cuda)
+				} else {
+					panic("GPU enabled but CUDA module is not specified")
+				}
 			}
-		}
-		if kokkos, ok := opts["Kokkos"]; ok {
-			modules = append(modules, kokkos)
-		} else {
-			panic("Kokkos module is not specified")
+			if kokkos, ok := opts["Kokkos"]; ok {
+				modules = append(modules, kokkos)
+			} else {
+				panic("Kokkos module is not specified")
+			}
 		}
 		flags := []string{
 			"CMAKE_CXX_STANDARD=17",
@@ -141,9 +144,14 @@ var ADIOS2Configs = map[string]interface{}{
 			flags = append(flags, "ADIOS2_USE_MPI=OFF")
 			flags = append(flags, "ADIOS2_HAVE_HDF5_VOL=OFF")
 		}
-		prebuild := []string{
-			"module purge",
-			"module load " + strings.Join(modules, " "),
+		var prebuild []string
+		if use_modules {
+			prebuild = []string{
+				"module purge",
+				"module load " + strings.Join(modules, " "),
+			}
+		} else {
+			prebuild = []string{}
 		}
 		configure := []string{
 			"cd " + src_path,

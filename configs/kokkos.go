@@ -86,6 +86,7 @@ var KokkosConfigs = map[string]interface{}{
 		src_path, install_path string,
 		is_debug, has_mpi bool,
 		cpu_arch, gpu_arch string,
+		use_modules bool,
 		opts map[string]string,
 	) ([]string, []string, []string, []string) {
 		modules := []string{}
@@ -97,33 +98,44 @@ var KokkosConfigs = map[string]interface{}{
 		}
 		if cpu_arch != "" {
 			flags = append(flags, "Kokkos_ARCH_"+strings.ToUpper(cpu_arch)+"=ON")
-			if cxx, ok := opts["CXX"]; ok {
-				modules = append(modules, cxx)
-			} else {
-				panic("CXX module is not specified")
+			if use_modules {
+				if cxx, ok := opts["CXX"]; ok {
+					modules = append(modules, cxx)
+				} else {
+					panic("CXX module is not specified")
+				}
 			}
 		}
 		if gpu_arch != "" {
 			flags = append(flags, "Kokkos_ARCH_"+strings.ToUpper(gpu_arch)+"=ON")
 			flags = append(flags, "Kokkos_ENABLE_CUDA=ON")
-			if cuda, ok := opts["CUDA"]; ok {
-				modules = append(modules, cuda)
-			} else {
-				panic("GPU enabled but CUDA module is not specified")
+			if use_modules {
+				if cuda, ok := opts["CUDA"]; ok {
+					modules = append(modules, cuda)
+				} else {
+					panic("GPU enabled but CUDA module is not specified")
+				}
 			}
 		}
 		if !has_mpi {
 			flags = append(flags, "Kokkos_ENABLE_OPENMP=ON")
 		} else {
-			if mpi, ok := opts["MPI"]; ok {
-				modules = append(modules, mpi)
-			} else {
-				panic("MPI enabled but MPI module is not specified")
+			if use_modules {
+				if mpi, ok := opts["MPI"]; ok {
+					modules = append(modules, mpi)
+				} else {
+					panic("MPI enabled but MPI module is not specified")
+				}
 			}
 		}
-		prebuild := []string{
-			"module purge",
-			"module load " + strings.Join(modules, " "),
+		var prebuild []string
+		if use_modules {
+			prebuild = []string{
+				"module purge",
+				"module load " + strings.Join(modules, " "),
+			}
+		} else {
+			prebuild = []string{}
 		}
 		configure := []string{
 			"cd " + src_path,

@@ -86,6 +86,7 @@ var HDF5Configs = map[string]interface{}{
 		src_path, install_path string,
 		is_debug, has_mpi bool,
 		cpu_arch, gpu_arch string,
+		use_modules bool,
 		opts map[string]string,
 	) ([]string, []string, []string, []string) {
 		modules := []string{}

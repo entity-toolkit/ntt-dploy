@@ -2,7 +2,7 @@ package configs
 
 type SuffixFunc = (func(bool, string, string) string)
 type ConditionFunc = (func(bool, bool) bool)
-type BuildScript = (func(string, string, bool, bool, string, string, map[string]string) ([]string, []string, []string, []string))
+type BuildScript = (func(string, string, bool, bool, string, string, bool, map[string]string) ([]string, []string, []string, []string))
 type ModuleTemplate = (func(string, string, bool, bool, string, string, map[string]string) []string)
 
 var (
