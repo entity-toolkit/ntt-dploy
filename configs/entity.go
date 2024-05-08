@@ -24,27 +24,37 @@ var EntityConfigs = map[string]interface{}{
 		return suffix
 	},
 	"ModuleTemplate": func(sfx string, is_debug bool, has_mpi bool, cpu_arch string, gpu_arch string, modules []string) []string {
-		modulefile := []string{}
-		modulefile = append(modulefile, "#%Module1.0######################################################################")
-		modulefile = append(modulefile, "##")
+		// modulefile := []string{}
 		conf := strings.ToUpper(strings.ReplaceAll(sfx, "/", " @ "))
-		modulefile = append(modulefile, "## "+conf+"")
-		modulefile = append(modulefile, "##")
-		modulefile = append(modulefile, "################################################################################")
-		modulefile = append(modulefile, "proc ModulesHelp { } {")
-		modulefile = append(modulefile, "	 puts stderr \"\\t"+conf+"\\n\"")
-		modulefile = append(modulefile, "}")
-		modulefile = append(modulefile, "")
-		modulefile = append(modulefile, "module-whatis      \"Sets up "+conf+"\"")
-		modulefile = append(modulefile, "")
-		modulefile = append(modulefile, "conflict           entity")
-		modulefile = append(modulefile, "")
+		cpu_setenv := []string{}
+		gpu_setenv := []string{}
 		if cpu_arch != "" {
-			modulefile = append(modulefile, "setenv             Kokkos_ARCH_"+strings.ToUpper(cpu_arch)+" ON")
+			cpu_setenv = []string{
+				"setenv             Kokkos_ARCH_" + strings.ToUpper(cpu_arch) + "ON",
+			}
 		}
 		if gpu_arch != "" {
-			modulefile = append(modulefile, "setenv             Kokkos_ARCH_"+strings.ToUpper(gpu_arch)+" ON")
-			modulefile = append(modulefile, "setenv             Kokkos_ENABLE_CUDA ON")
+			gpu_setenv = []string{
+				"setenv             Kokkos_ARCH_" + strings.ToUpper(gpu_arch) + "ON",
+				"setenv             Kokkos_ENABLE_CUDA ON",
+			}
+		}
+		modulefile := []string{
+			"#%Module1.0######################################################################",
+			"##",
+			"##" + conf,
+			"##",
+			"################################################################################",
+			"proc ModulesHelp { } {",
+			"  puts stderr \"\\t" + conf + "\\n\"",
+			"}",
+			"",
+			"module-whatis      \"Sets up " + conf + "\"",
+			"",
+			"conflict           entity",
+			"",
+			cpu_setenv...,
+			gpu_setenv...,
 		}
 		if !has_mpi {
 			modulefile = append(modulefile, "setenv             Kokkos_ENABLE_OPENMP ON")
