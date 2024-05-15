@@ -11,17 +11,17 @@ func ModeSelector(tuigo.Window) tuigo.Window {
 		configs.FOCUSABLE,
 		tuigo.VerticalContainer,
 		tuigo.Text(
-			global.MODE.Text,
+			global.LABELS["pg1:title"],
 			tuigo.LabelText,
 		),
 		tuigo.SelectorWithID(
-			global.MODE.Id,
-			[]string{"Entity", "Kokkos", "ADIOS2"},
-			configs.SELECT_ONE,
+			global.Selectors["MODE"].Id(),
+			global.Selectors["MODE"].Options().([]string),
+			configs.MULTI_SELECT,
 			configs.NO_CALLBACK,
 		),
 		tuigo.Text(
-			global.COMMENTS["modules"],
+			global.LABELS["pg1:comment_modules"],
 			tuigo.DimmedText,
 		),
 	)
