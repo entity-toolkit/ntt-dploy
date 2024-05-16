@@ -1,8 +1,6 @@
 package pages
 
-import (
-	"github.com/haykh/tuigo"
-)
+import "github.com/haykh/tuigo"
 
 func Review(prev tuigo.Window) tuigo.Window {
 	return tuigo.Container(
