@@ -5,7 +5,6 @@ import (
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/entity-toolkit/ntt-dploy/configs"
 	"github.com/entity-toolkit/ntt-dploy/pages"
 	"github.com/haykh/tuigo"
 )
@@ -22,15 +21,18 @@ import (
 func main() {
 
 	backend := tuigo.Backend{
-		States: []tuigo.AppState{"mode", "specs", "depends", "review"},
+		States: []tuigo.AppState{"main", "review"},
 		Constructors: map[tuigo.AppState]tuigo.Constructor{
-			"mode":    pages.ModeSelector,
-			"specs":   pages.SpecsSelector,
-			"depends": pages.DependenciesSelector,
-			"review":  pages.Review},
+			"main": pages.MainSelector,
+			// "specs": pages.SpecsSelector,
+			// "depends": pages.DependenciesSelector,
+			"review": pages.Review},
+		Updaters: map[tuigo.AppState]tuigo.Updater{
+			"main": pages.MainUpdater,
+		},
 		Finalizer: func(cs map[tuigo.AppState]tuigo.Window) tuigo.Window {
 			return tuigo.Container(
-				configs.NONFOCUSABLE,
+				tuigo.NonFocusable,
 				tuigo.VerticalContainer,
 				tuigo.Text("All Done!", tuigo.NormalText))
 		},

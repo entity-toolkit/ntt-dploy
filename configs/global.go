@@ -17,15 +17,15 @@ var (
 	DefaultCXX        = "module:gcc"
 )
 
-type OptKokkosUpd struct{}
-type OptMPIUpd struct{}
-type OptADIOS2Upd struct{}
-type OptHDF5Upd struct{}
+// type OptKokkosUpd struct{}
+// type OptMPIUpd struct{}
+// type OptADIOS2Upd struct{}
+// type OptHDF5Upd struct{}
 
-const NONFOCUSABLE = true
-const FOCUSABLE = true
-const MULTI_SELECT = true
-const SELECT_ONE = false
+// const NONFOCUSABLE = true
+// const FOCUSABLE = true
+// const MULTI_SELECT = true
+// const SELECT_ONE = false
 
 var NO_CALLBACK tea.Msg = nil
 

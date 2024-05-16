@@ -4,7 +4,7 @@ go 1.21.5
 
 require (
 	github.com/charmbracelet/bubbletea v0.25.0
-	github.com/haykh/tuigo v1.4.1
+	github.com/haykh/tuigo v1.5.2
 )
 
 require (

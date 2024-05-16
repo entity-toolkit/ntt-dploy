@@ -17,7 +17,7 @@ func ModeSelector(tuigo.Window) tuigo.Window {
 		tuigo.SelectorWithID(
 			global.Selectors["MODE"].Id(),
 			global.Selectors["MODE"].Options().([]string),
-			configs.MULTI_SELECT,
+			tuigo.MultiSelect,
 			configs.NO_CALLBACK,
 		),
 		tuigo.Text(

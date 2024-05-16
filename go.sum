@@ -12,6 +12,12 @@ github.com/containerd/console v1.0.4-0.20230313162750-1ae8d489ac81 h1:q2hJAaP1k2
 github.com/containerd/console v1.0.4-0.20230313162750-1ae8d489ac81/go.mod h1:YynlIjWYF8myEu6sdkwKIvGQq+cOckRm6So2avqoYAk=
 github.com/haykh/tuigo v1.4.1 h1:aQ87TI/khsmt29ap9bNMEaFBCf1lAlLlPw0WWUWAsjs=
 github.com/haykh/tuigo v1.4.1/go.mod h1:XxEIUIq7WwBxb95YTo7du4uxxbapBiHSMmcPvogjH4w=
+github.com/haykh/tuigo v1.5.0 h1:aTD5euoqioQvOiJmWdto3lsjoTbPL7HzuZtS2TfrM/k=
+github.com/haykh/tuigo v1.5.0/go.mod h1:XxEIUIq7WwBxb95YTo7du4uxxbapBiHSMmcPvogjH4w=
+github.com/haykh/tuigo v1.5.1 h1:MaWQwE22GJnW/0AJxQUXjEh9ZtL1heHmdAds2wCASaU=
+github.com/haykh/tuigo v1.5.1/go.mod h1:XxEIUIq7WwBxb95YTo7du4uxxbapBiHSMmcPvogjH4w=
+github.com/haykh/tuigo v1.5.2 h1:UfAW0thrY2FEb5/smVsiupqE/FiJme417e3Y3qsS7/k=
+github.com/haykh/tuigo v1.5.2/go.mod h1:XxEIUIq7WwBxb95YTo7du4uxxbapBiHSMmcPvogjH4w=
 github.com/lucasb-eyer/go-colorful v1.2.0 h1:1nnpGOrhyZZuNyfu1QjKiUICQ74+3FNCN69Aj6K7nkY=
 github.com/lucasb-eyer/go-colorful v1.2.0/go.mod h1:R4dSotOR9KMtayYi1e77YzuveK+i7ruzyGqttikkLy0=
 github.com/mattn/go-isatty v0.0.20 h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWEY=

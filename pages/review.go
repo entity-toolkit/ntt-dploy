@@ -1,13 +1,12 @@
 package pages
 
 import (
-	"github.com/entity-toolkit/ntt-dploy/configs"
 	"github.com/haykh/tuigo"
 )
 
 func Review(prev tuigo.Window) tuigo.Window {
 	return tuigo.Container(
-		configs.NONFOCUSABLE,
+		tuigo.NonFocusable,
 		tuigo.VerticalContainer,
 		tuigo.Text("Review", tuigo.LabelText),
 	)

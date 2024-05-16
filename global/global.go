@@ -2,49 +2,92 @@ package global
 
 import (
 	"errors"
-	"github.com/haykh/tuigo"
 	"math/rand"
+
+	"github.com/haykh/tuigo"
 )
 
 type Selector struct {
-	id      int
-	text    string
-	value   interface{}
-	options interface{}
-	def     interface{}
+	id       int
+	text     string
+	value    interface{}
+	options  interface{}
+	def      interface{}
+	callback interface{}
 }
 
-var LABELS = map[string]string{
-	"pg1:title":           "1. Choose whether you want to install a separate library or the modules for the Entity itself",
-	"pg1:comment_modules": "[*] Installation of Entity is done via environment modules",
-	"pg2:title_entity":    "2. Pick Entity configuration to install",
-	"pg2:title_kokkos":    "2. Pick Kokkos configuration to install",
-	"pg2:title_adios2":    "2. Pick ADIOS2 configuration to install",
-	"pg2:comment_adios2":  "[*] Kokkos and HDF5 installation is required",
+var Labels = map[string]string{
+	"title": "Pick & configure the libraries to install",
 }
 
-const NMAX = 100000
+const NMAX = 1000000
+
+// type MODE_CALLBACK struct{}
+// type CUDA_CALLBACK struct{}
+// type MPI_CALLBACK struct{}
+// type OUTPUT_CALLBACK struct{}
+// type KOKKOS_SRC_CALLBACK struct{}
+// type ADIOS2_SRC_CALLBACK struct{}
+
+type StateChange struct{}
 
 var Selectors = map[string]*Selector{
 	"MODE": {
-		id:      rand.Intn(NMAX),
-		options: []string{"Entity", "Kokkos", "ADIOS2"},
+		id:       rand.Intn(NMAX),
+		options:  []string{"Entity", "Kokkos", "ADIOS2", "MPI", "HDF5"},
+		callback: StateChange{},
+	},
+	"MODE_TEXT": {
+		id:   rand.Intn(NMAX),
+		text: "Configure selected libraries below",
+		def:  "No libraries selected",
 	},
 	"DEBUG": {
 		id:   rand.Intn(NMAX),
-		text: "enable debug mode",
+		text: "debug build",
+	},
+	"CXX_PATH": {
+		id:   rand.Intn(NMAX),
+		text: "Host compiler",
 	},
 	"CUDA": {
+		id:       rand.Intn(NMAX),
+		text:     "CUDA support",
+		callback: StateChange{},
+		def:      true,
+	},
+	"CUDA_PATH": {
 		id:   rand.Intn(NMAX),
-		text: "enable CUDA support",
+		text: "CUDA compiler",
 	},
 	"MPI": {
+		id:       rand.Intn(NMAX),
+		text:     "MPI support",
+		callback: StateChange{},
+	},
+	"MPI_SRC_DIR": {
 		id:   rand.Intn(NMAX),
-		text: "use MPI",
+		text: "path to MPI source code",
+	},
+	"MPI_INSTALL_DIR": {
+		id:   rand.Intn(NMAX),
+		text: "MPI install path",
+		def:  "$MPI_HOME",
 	},
 	"OUTPUT": {
+		id:       rand.Intn(NMAX),
+		text:     "enable output",
+		callback: StateChange{},
+		def:      true,
+	},
+	"HDF5_SRC_DIR": {
 		id:   rand.Intn(NMAX),
-		text: "enable output",
+		text: "path to HDF5 source code",
+	},
+	"HDF5_INSTALL_DIR": {
+		id:   rand.Intn(NMAX),
+		text: "HDF5 install path",
+		def:  "$HDF5_DIR",
 	},
 	"CPUARCH": {
 		id:   rand.Intn(NMAX),
@@ -72,8 +115,9 @@ var Selectors = map[string]*Selector{
 		},
 	},
 	"KOKKOS_SRC_DIR": {
-		id:   rand.Intn(NMAX),
-		text: "path to Kokkos source code",
+		id:       rand.Intn(NMAX),
+		text:     "path to Kokkos source code",
+		callback: StateChange{},
 	},
 	"KOKKOS_INSTALL_DIR": {
 		id:   rand.Intn(NMAX),
@@ -81,18 +125,35 @@ var Selectors = map[string]*Selector{
 		def:  "$HOME/opt/Kokkos/",
 	},
 	"ADIOS2_SRC_DIR": {
-		id:   rand.Intn(NMAX),
-		text: "path to ADIOS2 source code",
+		id:       rand.Intn(NMAX),
+		text:     "path to ADIOS2 source code",
+		callback: StateChange{},
 	},
 	"ADIOS2_INSTALL_DIR": {
 		id:   rand.Intn(NMAX),
 		text: "ADIOS2 install path",
 		def:  "$HOME/opt/ADIOS2/",
 	},
+	"COMMENT_MODULES": {
+		id:   rand.Intn(NMAX),
+		text: "[*] To configure the Entity,\n    environment modules are required",
+	},
+	"COMMENT_ADIOS2": {
+		id:   rand.Intn(NMAX),
+		text: "[*] ADIOS2 depends on\n    Kokkos and HDF5 installations",
+	},
+	"HELP_ENVMOD": {
+		id:   rand.Intn(NMAX),
+		text: "[*] To use environment module as a\n    dependency, specify `module:<MOD>`\n    instead of a path\n    Example: `MPI install path: module:ompi/4.0.5`",
+	},
+	"HELP_KEYS": {
+		id:   rand.Intn(NMAX),
+		text: "[Tab/Shift-Tab] Next/previous field\n[Space] Select/Unselect\n[Up/Down] Navigate options\n[Esc] Quit",
+	},
 }
 
 func (s *Selector) Read(w tuigo.Window) error {
-	val := w.GetElementByID(s.id).(tuigo.SelectorElement).Data()
+	val := w.GetElementByID(s.id).Data()
 	if val != nil {
 		s.value = val
 	} else {
@@ -119,6 +180,10 @@ func (s Selector) Options() interface{} {
 
 func (s Selector) Def() interface{} {
 	return s.def
+}
+
+func (s Selector) Callback() interface{} {
+	return s.callback
 }
 
 // var ENTITY_PATH = Selector{
