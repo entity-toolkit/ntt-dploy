@@ -6,6 +6,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/entity-toolkit/ntt-dploy/pages"
+	"github.com/entity-toolkit/ntt-dploy/utils"
 	"github.com/haykh/tuigo"
 )
 
@@ -23,17 +24,12 @@ func main() {
 		States: []tuigo.AppState{"main", "review"},
 		Constructors: map[tuigo.AppState]tuigo.Constructor{
 			"main":   pages.MainSelector,
-			"review": pages.Review},
+			"review": pages.Review,
+		},
 		Updaters: map[tuigo.AppState]tuigo.Updater{
 			"main": pages.MainUpdater,
 		},
-		Finalizer: func(cs map[tuigo.AppState]tuigo.Window) tuigo.Window {
-			return tuigo.Container(
-				tuigo.NonFocusable,
-				tuigo.VerticalContainer,
-				tuigo.Text("All Done!", tuigo.NormalText),
-			)
-		},
+		Finalizer: utils.Finalizer,
 	}
 
 	program := tea.NewProgram(tuigo.App(backend, false))
