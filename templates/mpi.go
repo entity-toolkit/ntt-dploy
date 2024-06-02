@@ -47,7 +47,7 @@ proc ModulesHelp { } {
 module-whatis      "Sets up {{settings .suffix}}"
 
 conflict           mpi ompi openmpi mpich intel-mpi
-{{if not .modules}}{{else}}prereqs           {{range .modules}} {{.}}{{end}}{{end}}
+{{if not .modules}}{{else}}prereq            {{range .modules}} {{.}}{{end}}{{end}}
 
 set                basedir               {{.install_path}}
 prepend-path       PATH                  $basedir/bin
@@ -69,19 +69,20 @@ setenv             OPENMPI_HOME          $basedir`,
 	),
 	BuildScriptTemplate: CreateTemplate(
 		"build",
-		`module purge{{if not .modules}}{{else}}{{range .modules}}
-module load {{.}}{{end}}{{end}}
-cd {{.src_path}}
-rm -rf build
-./autogen.pl
-mkdir -p build
-cd build
-../configure --with-devel-headers --prefix={{.install_path}} {{if .gpu -}}--with-cuda=$CUDA_HOME{{end}}
-
-make -j
-make install
-
-rm -rf build`,
+		`CURRENT_DIR=$(pwd) &&\
+module purge{{if not .modules}}{{else}}{{range .modules}} &&\
+module load {{.}}{{end}}{{end}} &&\
+cd {{.src_path}} &&\
+rm -rf build &&\
+mkdir -p build &&\
+cd build &&\
+../configure --with-devel-headers --prefix={{.install_path}} {{if .gpu -}}--with-cuda=$CUDA_HOME{{end}} --enable-mpi-fortran=no &&\
+make -j &&\
+make install &&\
+cd .. &&\
+rm -rf build &&\
+cd $CURRENT_DIR &&\
+unset CURRENT_DIR`,
 	),
 }
 

@@ -138,6 +138,7 @@ func Review(prev tuigo.Window) tuigo.Window {
 					if installdir == "" || installdir == def+strings.ToLower(dep) {
 						installdir = def + strings.ToLower(dep) + "/" + strings.ReplaceAll(Configs[dep].Suffix(), "/", ".")
 					}
+					installdir = strings.ReplaceAll(installdir, "$HOME", os.Getenv("HOME"))
 					Configs[dep].AddSetting("install_path", installdir)
 					dependencies = append(
 						dependencies,
@@ -166,11 +167,6 @@ func Review(prev tuigo.Window) tuigo.Window {
 				if cxx_mod != "" {
 					Configs["ADIOS2"].AddModule(cxx_mod)
 				}
-				if with_cuda {
-					if cuda_mod != "" {
-						Configs["ADIOS2"].AddModule(cuda_mod)
-					}
-				}
 				if mode_mpi {
 					Configs["ADIOS2"].AddModule(Configs["MPI"].Suffix())
 				} else if with_mpi {
@@ -178,15 +174,6 @@ func Review(prev tuigo.Window) tuigo.Window {
 					if strings.HasPrefix(mpi_path, "module:") {
 						mpi_path = mpi_path[7:]
 						Configs["ADIOS2"].AddModule(mpi_path)
-					}
-				}
-				if mode_kokkos {
-					Configs["ADIOS2"].AddModule(Configs["Kokkos"].Suffix())
-				} else {
-					kokkos_path := readDepDir("Kokkos", "install", prev)
-					if strings.HasPrefix(kokkos_path, "module:") {
-						kokkos_path = kokkos_path[7:]
-						Configs["ADIOS2"].AddModule(kokkos_path)
 					}
 				}
 				if mode_hdf5 {

@@ -391,8 +391,8 @@ func MainUpdater(window tuigo.Window, msg tea.Msg) (tuigo.Window, tea.Cmd) {
 			visible(sel.Selectors["CXX_MOD"].Id(), mode_any)
 
 			// cpuarch
-			visible(sel.Selectors["CPUARCH"].Id()+1, mode_entity || mode_kokkos)
 			visible(sel.Selectors["CPUARCH"].Id(), mode_entity || mode_kokkos)
+			visible(sel.Selectors["CPUARCH"].Id()+1, mode_entity || mode_kokkos)
 
 			// cuda
 			sel.Selectors["CUDA"].Read(window)
@@ -404,41 +404,41 @@ func MainUpdater(window tuigo.Window, msg tea.Msg) (tuigo.Window, tea.Cmd) {
 
 			// gpuarch
 			visible(
-				sel.Selectors["GPUARCH"].Id()+1,
+				sel.Selectors["GPUARCH"].Id(),
 				(mode_entity || mode_kokkos) && with_cuda,
 			)
 			visible(
-				sel.Selectors["GPUARCH"].Id(),
+				sel.Selectors["GPUARCH"].Id()+1,
 				(mode_entity || mode_kokkos) && with_cuda,
 			)
 
 			// kokkos
 			visible(
 				sel.Selectors["KOKKOS_INSTALL_DIR"].Id(),
-				mode_entity || mode_kokkos || mode_adios2,
+				mode_entity || mode_kokkos,
 			)
-			visible(sel.Selectors["KOKKOS_SRC_DIR"].Id(), mode_kokkos)
-			visible(sel.Selectors["KOKKOS_SRC_DIR"].Id()+1, mode_kokkos)
 			visible(
 				sel.Selectors["KOKKOS_INSTALL_DIR"].Id()+1,
-				mode_entity || mode_kokkos || mode_adios2,
+				mode_entity || mode_kokkos,
 			)
 			visible(
 				sel.Selectors["KOKKOS_INSTALL_DIR"].Id()+2,
-				mode_entity || mode_kokkos || mode_adios2,
+				mode_entity || mode_kokkos,
 			)
+			visible(sel.Selectors["KOKKOS_SRC_DIR"].Id(), mode_kokkos)
+			visible(sel.Selectors["KOKKOS_SRC_DIR"].Id()+1, mode_kokkos)
 
 			// adios2
-			visible(
-				sel.Selectors["ADIOS2_INSTALL_DIR"].Id()+2,
-				mode_entity || mode_adios2,
-			)
 			visible(
 				sel.Selectors["ADIOS2_INSTALL_DIR"].Id(),
 				mode_entity || mode_adios2,
 			)
 			visible(
 				sel.Selectors["ADIOS2_INSTALL_DIR"].Id()+1,
+				mode_entity || mode_adios2,
+			)
+			visible(
+				sel.Selectors["ADIOS2_INSTALL_DIR"].Id()+2,
 				mode_entity || mode_adios2,
 			)
 			visible(sel.Selectors["ADIOS2_SRC_DIR"].Id(), mode_adios2)
@@ -452,10 +452,6 @@ func MainUpdater(window tuigo.Window, msg tea.Msg) (tuigo.Window, tea.Cmd) {
 			sel.Selectors["MPI"].Read(window)
 			with_mpi := sel.Selectors["MPI"].Value().(bool)
 			visible(
-				sel.Selectors["MPI_INSTALL_DIR"].Id()+2,
-				((mode_entity || mode_adios2 || mode_hdf5) && with_mpi) || mode_mpi,
-			)
-			visible(
 				sel.Selectors["MPI_INSTALL_DIR"].Id(),
 				((mode_entity || mode_adios2 || mode_hdf5) && with_mpi) || mode_mpi,
 			)
@@ -463,20 +459,24 @@ func MainUpdater(window tuigo.Window, msg tea.Msg) (tuigo.Window, tea.Cmd) {
 				sel.Selectors["MPI_INSTALL_DIR"].Id()+1,
 				((mode_entity || mode_adios2 || mode_hdf5) && with_mpi) || mode_mpi,
 			)
+			visible(
+				sel.Selectors["MPI_INSTALL_DIR"].Id()+2,
+				((mode_entity || mode_adios2 || mode_hdf5) && with_mpi) || mode_mpi,
+			)
 			visible(sel.Selectors["MPI_SRC_DIR"].Id(), mode_mpi)
 			visible(sel.Selectors["MPI_SRC_DIR"].Id()+1, mode_mpi)
 
 			// hdf5
-			visible(
-				sel.Selectors["HDF5_INSTALL_DIR"].Id()+2,
-				(mode_entity || mode_adios2) || mode_hdf5,
-			)
 			visible(
 				sel.Selectors["HDF5_INSTALL_DIR"].Id(),
 				(mode_entity || mode_adios2) || mode_hdf5,
 			)
 			visible(
 				sel.Selectors["HDF5_INSTALL_DIR"].Id()+1,
+				(mode_entity || mode_adios2) || mode_hdf5,
+			)
+			visible(
+				sel.Selectors["HDF5_INSTALL_DIR"].Id()+2,
 				(mode_entity || mode_adios2) || mode_hdf5,
 			)
 			visible(sel.Selectors["HDF5_SRC_DIR"].Id(), mode_hdf5)

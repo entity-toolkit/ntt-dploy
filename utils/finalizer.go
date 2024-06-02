@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	global "github.com/entity-toolkit/ntt-dploy/pages"
 	"github.com/haykh/tuigo"
 	"os"
@@ -13,29 +12,31 @@ func Finalizer(cs map[tuigo.AppState]tuigo.Window) tuigo.Window {
 	messages := []tuigo.Component{}
 	pwd, _ := os.Getwd()
 	if global.ModulePath != "" {
-		temporary_modpath := filepath.Join(pwd, "temp/modules")
+		modfiles := []string{}
+		resolved_modpath := strings.ReplaceAll(global.ModulePath, "$HOME", os.Getenv("HOME"))
+		resolved_modpath = strings.ReplaceAll(resolved_modpath, "~", os.Getenv("HOME"))
+		resolved_modpath = strings.ReplaceAll(resolved_modpath, "$USER", os.Getenv("USER"))
+		resolved_modpath = strings.ReplaceAll(resolved_modpath, "$PWD", pwd)
 		for _, template := range global.Configs {
 			if template != nil {
+				modfile := filepath.Join(resolved_modpath, template.Suffix())
+				modfiles = append(modfiles, template.Suffix())
 				WriteToFile(
-					filepath.Join(temporary_modpath, template.Suffix()),
+					modfile,
 					template.Module(),
 				)
 			}
 		}
 		messages = append(
 			messages,
-			tuigo.Text("Modules have been written to `"+temporary_modpath+"`", tuigo.LabelText),
+			tuigo.Text("The following modules have been written to `"+resolved_modpath+"`:", tuigo.LabelText),
 		)
-		messages = append(messages,
-			tuigo.Text(
-				fmt.Sprintf(
-					"Run `mv %s/* %s` to move the modules to the correct location",
-					temporary_modpath,
-					global.ModulePath,
-				),
-				tuigo.NormalText,
-			),
-		)
+		for _, modfile := range modfiles {
+			messages = append(
+				messages,
+				tuigo.Text(modfile, tuigo.NormalText),
+			)
+		}
 	}
 	scriptpath := filepath.Join(pwd, "temp")
 	buildfiles := []string{}
@@ -48,6 +49,21 @@ func Finalizer(cs map[tuigo.AppState]tuigo.Window) tuigo.Window {
 				filepath.Join(scriptpath, buildfile),
 				template.BuildScript(),
 			)
+			msg := global.HowTo[mod]
+			if mod == "HDF5" {
+				msg = "1. Create a directory `" + global.Configs[mod].Settings["src_path"].(string) + "`\n" + msg
+			} else {
+				msg = msg + " to `" + global.Configs[mod].Settings["src_path"].(string) + "`"
+			}
+			messages = append(
+				messages,
+				tuigo.Container(
+					tuigo.NonFocusable,
+					tuigo.HorizontalContainerTop,
+					tuigo.Text(mod+":", tuigo.LabelText),
+					tuigo.Text(msg, tuigo.NormalText),
+				),
+			)
 		}
 	}
 	if len(buildfiles) > 0 {
@@ -58,14 +74,15 @@ func Finalizer(cs map[tuigo.AppState]tuigo.Window) tuigo.Window {
 		messages = append(
 			messages,
 			tuigo.Text(
-				`Run the following commands to build and install the libraries
+				`[!] Make sure to follow the instructions above first to download the source codes
+
+Run the following commands to build and install the libraries
+
 % cd `+scriptpath+`
-% chmod +x `+strings.Join(buildfiles, " ")+`
-% ./`+strings.Join(buildfiles, " && ./"),
+% source ./`+strings.Join(buildfiles, " && source ./")+"\n",
 				tuigo.NormalText,
 			),
 		)
-
 	}
 	return tuigo.Container(
 		tuigo.NonFocusable,

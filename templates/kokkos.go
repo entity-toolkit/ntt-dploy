@@ -84,10 +84,10 @@ proc ModulesHelp { } {
 module-whatis      "Sets up {{settings .suffix}}"
 
 conflict           kokkos
-{{if not .modules}}{{else}}prereqs           {{range .modules}} {{.}}{{end}}{{end}}
+{{if not .modules}}{{else}}prereq            {{range .modules}} {{.}}{{end}}{{end}}
 
 set                basedir      {{.install_path}}
-append-path        PATH         $basedir/bin
+prepend-path       PATH         $basedir/bin
 setenv             Kokkos_DIR   $basedir
 
 {{range .flags}}
@@ -96,14 +96,17 @@ setenv             {{.}}{{end}}
 	),
 	BuildScriptTemplate: CreateTemplate(
 		"build",
-		`module purge{{if not .modules}}{{else}}{{range .modules}}
-module load {{.}}{{end}}{{end}}
-cd {{.src_path}}
-rm -rf build
-cmake -B build{{range .cflags}} -D {{.}}{{end}}
-cmake --build build -j
-cmake --install build
-rm -rf build`,
+		`CURRENT_DIR=$(pwd) &&\
+module purge{{if not .modules}}{{else}}{{range .modules}} &&\
+module load {{.}}{{end}}{{end}} &&\
+cd {{.src_path}} &&\
+rm -rf build &&\
+cmake -B build{{range .cflags}} -D {{.}}{{end}} &&\
+cmake --build build -j &&\
+cmake --install build &&\
+rm -rf build &&\
+cd $CURRENT_DIR &&\
+unset CURRENT_DIR`,
 	),
 }
 

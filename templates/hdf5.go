@@ -43,42 +43,42 @@ proc ModulesHelp { } {
 module-whatis      "Sets up {{settings .suffix}}"
 
 conflict           hdf5 phdf5 hdf5-mpi hdf5-parallel
-{{if not .modules}}{{else}}prereqs           {{range .modules}} {{.}}{{end}}{{end}}
+{{if not .modules}}{{else}}prereq            {{range .modules}} {{.}}{{end}}{{end}}
 
-set                basedir      {{.install_path}}
-prepend-path       LD_LIBRARY_PATH        $basedir/lib
-prepend-path       LIBRARY_PATH           $basedir/lib
-prepend-path       MANPATH                $basedir/man
-prepend-path       HDF5_ROOT              $basedir
-prepend-path       HDF5DIR                $basedir
-append-path        -d { } LDFLAGS         -L$basedir/lib
-append-path        -d { } INCLUDE         -I$basedir/include
-append-path        CPATH                  $basedir/include
-append-path        -d { } FFLAGS          -I$basedir/include
-append-path        -d { } FCFLAGS         -I$basedir/include
-append-path        -d { } LOCAL_LDFLAGS   -L$basedir/lib
-append-path        -d { } LOCAL_INCLUDE   -I$basedir/include
-append-path        -d { } LOCAL_CFLAGS    -I$basedir/include
-append-path        -d { } LOCAL_FFLAGS    -I$basedir/include
-append-path        -d { } LOCAL_FCFLAGS   -I$basedir/include
-append-path        -d { } LOCAL_CXXFLAGS  -I$basedir/include
+set                basedir               {{.install_path}}
+prepend-path       PATH                  $basedir/bin
+prepend-path       LD_LIBRARY_PATH       $basedir/lib
+prepend-path       LIBRARY_PATH          $basedir/lib
+prepend-path       MANPATH               $basedir/man
+prepend-path       HDF5_ROOT             $basedir
+prepend-path       HDF5DIR               $basedir
+append-path        -d { } LDFLAGS        -L$basedir/lib
+append-path        -d { } INCLUDE        -I$basedir/include
+append-path        CPATH                 $basedir/include
+append-path        -d { } FFLAGS         -I$basedir/include
+append-path        -d { } FCFLAGS        -I$basedir/include
+append-path        -d { } LOCAL_LDFLAGS  -L$basedir/lib
+append-path        -d { } LOCAL_INCLUDE  -I$basedir/include
+append-path        -d { } LOCAL_CFLAGS   -I$basedir/include
+append-path        -d { } LOCAL_FFLAGS   -I$basedir/include
+append-path        -d { } LOCAL_FCFLAGS  -I$basedir/include
+append-path        -d { } LOCAL_CXXFLAGS -I$basedir/include
 `,
 	),
 	BuildScriptTemplate: CreateTemplate(
 		"build",
-		`module purge{{if not .modules}}{{else}}{{range .modules}}
-module load {{.}}{{end}}{{end}}
-cd {{.src_path}}
-rm -rf build
-ctest -S HDF5config.cmake,HPC=sbatch,MPI={{if .mpi -}}true{{else -}}false{{end}},BUILD_GENERATOR=Unix,INSTALLDIR={{.install_path}} -C Release -V -O hdf5.log
-cd build
-make install
-cd HDF5_ZLIB-prefix/src/HDF5_ZLIB-build
-make install
-cd ../../../SZIP-prefix/src/SZIP-build
-make install
-cd {{.src_path}}
-rm -rf build`,
+		`CURRENT_DIR=$(pwd) &&\
+module purge{{if not .modules}}{{else}}{{range .modules}} &&\
+module load {{.}}{{end}}{{end}} &&\
+cd {{.src_path}} &&\
+rm -rf build &&\
+ctest -S HDF5config.cmake{{if .mpi}},MPI=true{{end}},BUILD_GENERATOR=Unix,INSTALLDIR={{.install_path}} -C Release -VV -O hdf5.log &&\
+cd build &&\
+make install &&\
+cd {{.src_path}} &&\
+rm -rf build &&\
+cd $CURRENT_DIR &&\
+unset CURRENT_DIR`,
 	),
 }
 

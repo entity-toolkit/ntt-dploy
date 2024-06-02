@@ -46,7 +46,7 @@ var Selectors = map[string]*Selector{
 		id:       rand.Intn(NMAX),
 		text:     "path to write module files",
 		callback: StateChange{},
-		def:      "$HOME/.modules",
+		def:      "$HOME/.modules/modfiles",
 	},
 	"CXX_MOD": {
 		id:          rand.Intn(NMAX),
